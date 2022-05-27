@@ -12,9 +12,10 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
 
-  console.log(req.body)
+  // console.log(req.body)
 
   state = req.body.arena.state;
+  console.log(state)
 
   let me = state[process.env.MY_URL];
   let potential_target;
