@@ -150,9 +150,9 @@ app.post('/', function (req, res) {
     }
   }
 
-  const rotate = ['L', 'R'];
+  const move = ['F', 'F', 'L', 'R'];
   if (!action)
-    action = rotate[Math.floor(Math.random() * rotate.length)];
+    action = move[Math.floor(Math.random() * move.length)];
 
   res.send(action);
 });
