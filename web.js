@@ -78,6 +78,7 @@ app.post('/', function (req, res) {
       }
     }
   }
+  console.log(potential_target)
 
   const moves = ['F', 'L', 'R'];
   if (!action)
