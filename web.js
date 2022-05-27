@@ -26,11 +26,14 @@ app.post('/', function (req, res) {
   // escape
   if (me.wasHit) {
     action = 'F'
+    console.log(me.direction)
     switch (me.direction){
       case 'E':
         for (var key in state) {
           diff = state[key].x = me.x
           if(diff == 1){
+            console.log(me)
+            console.log(state[key])
             console.log("Facing E. Someone in front of me, turn!")
             action = 'R'
             break;
@@ -41,6 +44,8 @@ app.post('/', function (req, res) {
         for (var key in state) {
           diff = state[key].x = me.x
           if(diff == -1){
+            console.log(me)
+            console.log(state[key])
             action = 'R'
             console.log("Facing W. Someone in front of me, turn!")
             break;
@@ -51,6 +56,8 @@ app.post('/', function (req, res) {
         for (var key in state) {
           diff = state[key].y - me.y
           if(diff == 1){
+            console.log(me)
+            console.log(state[key])
             console.log("Facing S. Someone in front of me, turn!")
             action = 'R'
             break;
@@ -61,6 +68,8 @@ app.post('/', function (req, res) {
         for (var key in state) {
           diff = state[key].y - me.y
           if(diff == -1){
+            console.log(me)
+            console.log(state[key])
             console.log("Facing N. Someone in front of me, turn!")
             action = 'R'
             break;
