@@ -94,7 +94,7 @@ app.post('/', function (req, res) {
       current_player = state[key]
       if (key != process.env.MY_URL) {
         // if in the same col and within 3 tiles
-        if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
+        if (current_player.x == me.x && Math.abs(me.y - current_player.y) <= 3) {
           potential_target = current_player;
           console.log(me)
           console.log(potential_target)
@@ -122,7 +122,7 @@ app.post('/', function (req, res) {
         }
 
         // if in the same row and within 3 tiles
-        if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
+        if (current_player.y == me.y && Math.abs(me.x - current_player.x) <= 3) {
           potential_target = current_player
           console.log(me)
           console.log(potential_target)
