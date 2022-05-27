@@ -12,7 +12,7 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
 
-  // console.log(req.body)
+  console.log(req.body)
 
   state = req.body.arena.state;
   console.log(state)
@@ -27,8 +27,9 @@ app.post('/', function (req, res) {
       // if in the same row and within 3 tiles
       if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
         potential_target = current_player;
-        if (potential_target.x > me.x){ // target is on East side
+        if (potential_target.x > me.x) { // target is on East side
           if (me.direction == 'E') {
+            console.log('Through East')
             action = 'T'
             break;
           } else if (me.direction == 'N') {
@@ -36,8 +37,9 @@ app.post('/', function (req, res) {
           } else {
             action = 'L'
           }
-        }else{                           // target is on West side
+        } else {                           // target is on West side
           if (me.direction == 'W') {
+            console.log('Through West')
             action = 'T'
             break;
           } else if (me.direction == 'N') {
@@ -51,8 +53,9 @@ app.post('/', function (req, res) {
       // if in the same row and within 3 tiles
       if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
         potential_target = current_player
-        if (potential_target.y > me.y){  //target is on South side
+        if (potential_target.y > me.y) {  //target is on South side
           if (me.direction == 'S') {
+            console.log('Through South')
             action = 'T'
             break;
           } else if (me.direction == 'E') {
@@ -60,8 +63,9 @@ app.post('/', function (req, res) {
           } else {
             action = 'L'
           }
-        }else{                           //target is on North side
+        } else {                           //target is on North side
           if (me.direction == 'N') {
+            console.log('Through North')
             action = 'T'
             break;
           } else if (me.direction == 'W') {
