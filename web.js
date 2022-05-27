@@ -11,6 +11,9 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
+
+  console.log(req.body)
+
   state = req.body.arena.state;
 
   let me = state[process.env.MY_URL];
