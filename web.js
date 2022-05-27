@@ -14,7 +14,7 @@ app.post('/', function (req, res) {
   console.log(req.body.state);
 
   const moves = ['F', 'T', 'L', 'R'];
-  res.send(moves[Math.floor(Math.random() * moves.length)]);
+  res.send(moves[0]);
 });
 
 app.post('/move', function (req, res) {
