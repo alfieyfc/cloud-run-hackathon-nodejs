@@ -30,7 +30,7 @@ app.post('/', function (req, res) {
     switch (me.direction){
       case 'E':
         for (var key in state) {
-          diff = state[key].x = me.x
+          diff = state[key].x - me.x
           if(diff == 1){
             console.log(me)
             console.log(state[key])
@@ -42,7 +42,7 @@ app.post('/', function (req, res) {
         break;
       case 'W':
         for (var key in state) {
-          diff = state[key].x = me.x
+          diff = state[key].x - me.x
           if(diff == -1){
             console.log(me)
             console.log(state[key])
