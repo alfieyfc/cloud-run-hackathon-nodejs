@@ -150,7 +150,7 @@ app.post('/', function (req, res) {
     }
   }
 
-  const move = ['F', 'F', 'L', 'R'];
+  const move = ['F', 'F', 'F', 'F', 'L', 'L', 'L', 'R', 'R', 'R'];
   if (!action)
     action = move[Math.floor(Math.random() * move.length)];
 
