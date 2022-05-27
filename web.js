@@ -35,7 +35,7 @@ app.post('/', function (req, res) {
             if(diff == 1 || me.x == 15){
               console.log(me)
               console.log(state[key])
-              console.log("Facing E. Someone in front of me, turn!")
+              console.log("Facing E. Nowhere to go forward, turn!")
               action = 'R'
               break;
             }
@@ -50,7 +50,7 @@ app.post('/', function (req, res) {
               console.log(me)
               console.log(state[key])
               action = 'R'
-              console.log("Facing W. Someone in front of me, turn!")
+              console.log("Facing W. Nowhere to go forward, turn!")
               break;
             }
           }
@@ -63,7 +63,7 @@ app.post('/', function (req, res) {
             if(diff == 1 || me.y == 11){
               console.log(me)
               console.log(state[key])
-              console.log("Facing S. Someone in front of me, turn!")
+              console.log("Facing S. Nowhere to go forward, turn!")
               action = 'R'
               break;
             }
@@ -77,7 +77,7 @@ app.post('/', function (req, res) {
             if(diff == -1 || me.x == 0){
               console.log(me)
               console.log(state[key])
-              console.log("Facing N. Someone in front of me, turn!")
+              console.log("Facing N. Nowhere to go forward, turn!")
               action = 'R'
               break;
             }
