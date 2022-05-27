@@ -30,49 +30,57 @@ app.post('/', function (req, res) {
     switch (me.direction){
       case 'E':
         for (var key in state) {
-          diff = state[key].x - me.x
-          if(diff == 1){
-            console.log(me)
-            console.log(state[key])
-            console.log("Facing E. Someone in front of me, turn!")
-            action = 'R'
-            break;
+          if (state[key].y == me.y){
+            diff = state[key].x - me.x
+            if(diff == 1){
+              console.log(me)
+              console.log(state[key])
+              console.log("Facing E. Someone in front of me, turn!")
+              action = 'R'
+              break;
+            }
           }
         }
         break;
       case 'W':
         for (var key in state) {
-          diff = state[key].x - me.x
-          if(diff == -1){
-            console.log(me)
-            console.log(state[key])
-            action = 'R'
-            console.log("Facing W. Someone in front of me, turn!")
-            break;
+            if (state[key].y == me.y){
+            diff = state[key].x - me.x
+            if(diff == -1){
+              console.log(me)
+              console.log(state[key])
+              action = 'R'
+              console.log("Facing W. Someone in front of me, turn!")
+              break;
+            }
           }
         }
         break;
       case 'S':
         for (var key in state) {
-          diff = state[key].y - me.y
-          if(diff == 1){
-            console.log(me)
-            console.log(state[key])
-            console.log("Facing S. Someone in front of me, turn!")
-            action = 'R'
-            break;
+            if (state[key].x == me.x){
+            diff = state[key].y - me.y
+            if(diff == 1){
+              console.log(me)
+              console.log(state[key])
+              console.log("Facing S. Someone in front of me, turn!")
+              action = 'R'
+              break;
+            }
           }
         }
         break;
       case 'N':
         for (var key in state) {
-          diff = state[key].y - me.y
-          if(diff == -1){
-            console.log(me)
-            console.log(state[key])
-            console.log("Facing N. Someone in front of me, turn!")
-            action = 'R'
-            break;
+            if (state[key].x == me.x){
+            diff = state[key].y - me.y
+            if(diff == -1){
+              console.log(me)
+              console.log(state[key])
+              console.log("Facing N. Someone in front of me, turn!")
+              action = 'R'
+              break;
+            }
           }
         }
         break;
