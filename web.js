@@ -14,7 +14,7 @@ app.post('/', function (req, res) {
   console.log("%j", req.body.state);
 
   const moves = ['F', 'T', 'L', 'R'];
-  res.send(moves[0]);
+  res.send(moves[1]);
 });
 
 app.listen(process.env.PORT || 8080);
