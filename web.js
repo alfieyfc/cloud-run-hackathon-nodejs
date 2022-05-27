@@ -93,12 +93,12 @@ app.post('/', function (req, res) {
     for (var key in state) {
       current_player = state[key]
       if (key != process.env.MY_URL) {
-
         // if in the same col and within 3 tiles
         if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
           potential_target = current_player;
+          console.log(potential_target)
           if (potential_target.y > me.y) { // target is on East side
-            // console.log('Target at East')
+            console.log('Target at East')
             if (me.direction == 'E') {
               action = 'T'
               break;
@@ -108,7 +108,7 @@ app.post('/', function (req, res) {
               action = 'L'
             }
           } else {                           // target is on West side
-            // console.log('Target at West')
+            console.log('Target at West')
             if (me.direction == 'W') {
               action = 'T'
               break;
@@ -123,10 +123,10 @@ app.post('/', function (req, res) {
         // if in the same row and within 3 tiles
         if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
           potential_target = current_player
+          console.log(potential_target)
           if (potential_target.x > me.x) {  //target is on South side
-            // console.log('Target at South')
+            console.log('Target at South')
             if (me.direction == 'S') {
-              // console.log('Target at South')
               action = 'T'
               break;
             } else if (me.direction == 'E') {
@@ -135,7 +135,7 @@ app.post('/', function (req, res) {
               action = 'L'
             }
           } else {                           //target is on North side
-            // console.log('Target at North')
+            console.log('Target at North')
             if (me.direction == 'N') {
               action = 'T'
               break;
@@ -154,6 +154,7 @@ app.post('/', function (req, res) {
   if (!action)
     action = move[Math.floor(Math.random() * move.length)];
 
+  console.log(action)
   res.send(action);
 });
 
