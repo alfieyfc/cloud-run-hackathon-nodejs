@@ -12,10 +12,10 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
 
-  console.log(req.body)
+  // console.log(req.body)
 
   state = req.body.arena.state;
-  console.log(state)
+  // console.log(state)
 
   let me = state[process.env.MY_URL];
   let potential_target;
@@ -28,8 +28,8 @@ app.post('/', function (req, res) {
       if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
         potential_target = current_player;
         if (potential_target.x > me.x) { // target is on East side
+          console.log('Target at East')
           if (me.direction == 'E') {
-            console.log('Through East')
             action = 'T'
             break;
           } else if (me.direction == 'N') {
@@ -38,8 +38,8 @@ app.post('/', function (req, res) {
             action = 'L'
           }
         } else {                           // target is on West side
+          console.log('Target at West')
           if (me.direction == 'W') {
-            console.log('Through West')
             action = 'T'
             break;
           } else if (me.direction == 'N') {
@@ -54,8 +54,9 @@ app.post('/', function (req, res) {
       if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
         potential_target = current_player
         if (potential_target.y > me.y) {  //target is on South side
+          console.log('Target at South')
           if (me.direction == 'S') {
-            console.log('Through South')
+            console.log('Target at South')
             action = 'T'
             break;
           } else if (me.direction == 'E') {
@@ -64,8 +65,8 @@ app.post('/', function (req, res) {
             action = 'L'
           }
         } else {                           //target is on North side
+          console.log('Target at North')
           if (me.direction == 'N') {
-            console.log('Through North')
             action = 'T'
             break;
           } else if (me.direction == 'W') {
