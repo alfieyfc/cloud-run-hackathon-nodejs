@@ -32,7 +32,7 @@ app.post('/', function (req, res) {
         for (var key in state) {
           if (state[key].y == me.y){
             diff = state[key].x - me.x
-            if(diff == 1){
+            if(diff == 1 || me.x == 15){
               console.log(me)
               console.log(state[key])
               console.log("Facing E. Someone in front of me, turn!")
@@ -46,7 +46,7 @@ app.post('/', function (req, res) {
         for (var key in state) {
             if (state[key].y == me.y){
             diff = state[key].x - me.x
-            if(diff == -1){
+            if(diff == -1 || me.x == 0){
               console.log(me)
               console.log(state[key])
               action = 'R'
@@ -60,7 +60,7 @@ app.post('/', function (req, res) {
         for (var key in state) {
             if (state[key].x == me.x){
             diff = state[key].y - me.y
-            if(diff == 1){
+            if(diff == 1 || me.y == 11){
               console.log(me)
               console.log(state[key])
               console.log("Facing S. Someone in front of me, turn!")
@@ -74,7 +74,7 @@ app.post('/', function (req, res) {
         for (var key in state) {
             if (state[key].x == me.x){
             diff = state[key].y - me.y
-            if(diff == -1){
+            if(diff == -1 || me.x == 0){
               console.log(me)
               console.log(state[key])
               console.log("Facing N. Someone in front of me, turn!")
