@@ -77,7 +77,8 @@ app.post('/', function (req, res) {
         }
         break;
     }
-    console.log("No one in front of me, run!")
+    if (action == 'F')
+      console.log("No one in front of me, run!")
 
   } else {
 
