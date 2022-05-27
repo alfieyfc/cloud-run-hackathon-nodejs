@@ -94,39 +94,11 @@ app.post('/', function (req, res) {
       current_player = state[key]
       if (key != process.env.MY_URL) {
         // if in the same col and within 3 tiles
-        if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
+        if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
           potential_target = current_player;
           console.log(me)
           console.log(potential_target)
-          if (potential_target.y > me.y) { // target is on East side
-            console.log('Target at East')
-            if (me.direction == 'E') {
-              action = 'T'
-              break;
-            } else if (me.direction == 'N') {
-              action = 'R'
-            } else {
-              action = 'L'
-            }
-          } else {                           // target is on West side
-            console.log('Target at West')
-            if (me.direction == 'W') {
-              action = 'T'
-              break;
-            } else if (me.direction == 'N') {
-              action = 'L'
-            } else {
-              action = 'R'
-            }
-          }
-        }
-
-        // if in the same row and within 3 tiles
-        if (current_player.x == me.x && Math.abs(me.y - current_player.y) < 3) {
-          potential_target = current_player
-          console.log(me)
-          console.log(potential_target)
-          if (potential_target.x > me.x) {  //target is on South side
+          if (potential_target.y > me.y) { // target is on South side
             console.log('Target at South')
             if (me.direction == 'S') {
               action = 'T'
@@ -136,12 +108,40 @@ app.post('/', function (req, res) {
             } else {
               action = 'L'
             }
-          } else {                           //target is on North side
+          } else {                           // target is on North side
             console.log('Target at North')
             if (me.direction == 'N') {
               action = 'T'
               break;
             } else if (me.direction == 'W') {
+              action = 'R'
+            } else {
+              action = 'L'
+            }
+          }
+        }
+
+        // if in the same row and within 3 tiles
+        if (current_player.y == me.y && Math.abs(me.x - current_player.x) < 3) {
+          potential_target = current_player
+          console.log(me)
+          console.log(potential_target)
+          if (potential_target.x > me.x) {  //target is on East side
+            console.log('Target at East')
+            if (me.direction == 'E') {
+              action = 'T'
+              break;
+            } else if (me.direction == 'N') {
+              action = 'R'
+            } else {
+              action = 'L'
+            }
+          } else {                           //target is on West side
+            console.log('Target at West')
+            if (me.direction == 'W') {
+              action = 'T'
+              break;
+            } else if (me.direction == 'S') {
               action = 'R'
             } else {
               action = 'L'
