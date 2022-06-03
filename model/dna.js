@@ -1,7 +1,9 @@
 require('dotenv').config();
-const pHeight = process.env.P_HEIGHT;
-const wILLength = 18 * pHeight;
-const wLOLength = pHeight * 4;
+const pHeight = process.env.P_HEIGHT | 10;
+const wILWidth = 18;
+const wILHeight = pHeight;
+const wLOWidth = pHeight;
+const wLOHeight = 4;
 
 class DNA {
 
@@ -11,27 +13,25 @@ class DNA {
   }
 
   static randomDNA () {
-    var wIL = [];
-    for (let i = 0; i < wILLength; i++) {
-      wIL.push(Math.random())
-    }
-    var wLO = [];
-    for (let i = 0; i < wLOLength; i++) {
-      wLO.push(Math.random())
-    }
+    var wIL = Array(wILHeight).fill(Array(wILWidth).fill(Math.random()));
+    var wLO = Array(wLOHeight).fill(Array(wLOWidth).fill(Math.random()));
     return new DNA(wIL, wLO);
   }
 
   static mix (dna_1, dna_2) {
-    var wIL = []
-    var wLO = []
-    for (let i = 0; i < wILLength; i++) {
-      if (Math.random() >= 0.5) wIL.push(dna_1.wIL[i])
-      else wIL.push(dna_2.wIL[i])
+    var wIL = new Array(wILHeight).fill(Array(wILWidth).fill(Math.random()));
+    var wLO = new Array(wLOHeight).fill(Array(wLOWidth).fill(Math.random()));
+    for (let i = 0; i < wILHeight; i++) {
+      for (let j = 0; j < wILWidth; j++) {
+        if (Math.random() >= 0.5) wIL[i][j] = dna_1.wIL[i][j]
+        else wIL[i][j] = dna_2.wIL[i][j]
+      }
     }
-    for (let i = 0; i < wLOLength; i++) {
-      if (Math.random() >= 0.5) wLO.push(dna_1.wLO[i])
-      else wLO.push(dna_2.wLO[i])
+    for (let i = 0; i < wLOHeight; i++) {
+      for (let j = 0; j < wLOWidth; j++) {
+        if (Math.random() >= 0.5) wLO[i][j] = dna_1.wLO[i][j]
+        else wLO[i][j] = dna_2.wLO[i][j]
+      }
     }
     return new DNA(wIL, wLO)
   }

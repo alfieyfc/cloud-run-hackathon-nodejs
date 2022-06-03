@@ -1,16 +1,15 @@
 require('dotenv').config();
 const DNA = require('../model/dna')
 
+const pHeight = process.env.P_HEIGHT | 10;
 const dna = DNA.randomDNA()
+// console.log(dna)
 
-it(`wIL should have 18 * ${process.env.P_HEIGHT} random values`, () => {
-  const l = 18 * process.env.P_HEIGHT;
-  expect(dna.wIL.length).toEqual(l)
-})
-
-it(`wLO should have 4 * ${process.env.P_HEIGHT} random values`, () => {
-  const l = 4 * process.env.P_HEIGHT;
-  expect(dna.wLO.length).toEqual(l)
+it(`wIL should have 18 * ${pHeight} random values`, () => {
+  expect(dna.wIL.length).toEqual(pHeight)
+  expect(dna.wIL[0].length).toEqual(18)
+  expect(dna.wLO.length).toEqual(4)
+  expect(dna.wLO[0].length).toEqual(pHeight)
 })
 
 it('mutate(0.1) should change wLO', () => {
