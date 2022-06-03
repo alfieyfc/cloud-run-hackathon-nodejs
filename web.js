@@ -20,9 +20,7 @@ app.post('/', function (req, res) {
   state = req.body.arena.state;
   numPlayers = Object.keys(state).length;
   me = state[process.env.MY_URL];
-  // TODO: Get state of top #1 Player
   topPlayer = util.topPlayerState(state);
-  // TODO: Get state of the Player closest to me
   closestPlayer = util.closestPlayerState(state, me, myUrl);
 
   input = [arenaDims[0], arenaDims[1], numPlayers, me.x, me.y, me.score, me.direction, me.wasHit, topPlayer.x, topPlayer.y, topPlayer.score, topPlayer.direction, topPlayer.wasHit, closestPlayer.x, closestPlayer.y, closestPlayer.score, closestPlayer.direction, closestPlayer.wasHit]

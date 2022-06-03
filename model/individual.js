@@ -14,9 +14,6 @@ class Individual {
     var newBorn = new Individual
     var newDNA = DNA.mix(parents[0].dna, parents[1].dna)
     newBorn.dna = newDNA
-    // console.log(parents[0].dna.wLO)
-    // console.log(parents[1].dna.wLO)
-    // console.log(newBorn.dna.wLO)
     return newBorn
   }
 }

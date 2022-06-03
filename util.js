@@ -1,5 +1,3 @@
-
-
 module.exports = {
   topPlayerState: (state) => {
     let topPlayer;
