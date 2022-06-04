@@ -1,20 +1,47 @@
 const Individual = require('./individual')
 
 class Population {
-  constructor() {
-    this.size = randomSize() // varies between 10 to 40
-    this.individuals = populate(this.size)
+  constructor(size, arenaDims, individuals) {
+    this.size = size // varies between 10 to 40
+    this.arenaDims = arenaDims
+    this.individuals = individuals
   }
 
-  reproduction = () => {
+  static random = () => {
+    var size = randomSize()
+    var x = Math.floor(Math.random() * 50) + 14
+    var y = Math.floor(Math.random() * 50) + 10
+    var arenaDims = [x, y]
+    return new Population(size, arenaDims, populate(null, size, arenaDims))
+  }
 
-    var elites = this.individuals.sort((a, b) => (a.score < b.score) ? 1 : -1).slice(0, 10)
-    this.changeSize
+  static preset = (arenaDims, elites) => {
+    var size = randomSize()
+    if (!arenaDims) {
+      var x = Math.floor(Math.random() * 50) + 14
+      var y = Math.floor(Math.random() * 50) + 10
+      arenaDims = [x, y]
+    }
+    return new Population(size, arenaDims, populate(elites, size, arenaDims))
+  }
+
+  reproduction = (elites) => {
+    if (!elites) { elites = this.individuals.sort((a, b) => (a.score < b.score) ? 1 : -1).slice(0, 10) }
+    this.size = randomSize()
     var nextGeneration = []
 
     while (nextGeneration.length < this.size) {
-      nextGeneration.push(Individual.breed(selection(elites)))
+      nextGeneration.push(Individual.breed(selection(elites), Math.floor(Math.random() * this.arenaDims[0]), Math.floor(Math.random() * this.arenaDims[1])))
+      var i = nextGeneration.length - 1;
+      var matches = nextGeneration.filter(individual => (individual.x === nextGeneration[i].x && individual.y === nextGeneration[i].y)).length
+      while (matches > 1) {
+        nextGeneration[i].x = Math.floor(Math.random() * this.arenaDims[0])
+        nextGeneration[i].y = Math.floor(Math.random() * this.arenaDims[1])
+        matches = nextGeneration.filter(individual => (individual.x === nextGeneration[i].x && individual.y === nextGeneration[i].y)).length
+      }
     }
+
+    this.individuals = nextGeneration
   }
 }
 
@@ -49,14 +76,20 @@ pickOne = (list) => {
   return result
 }
 
-changeSize = () => {
-  this.size = randomSize()
-}
-
-populate = (size) => {
+populate = (elites, size, arenaDims) => {
   var individuals = []
-  for (let i = 0; i < size; i++) {
-    individuals.push(new Individual())
+  if (elites) {
+    individuals = elites
+  }
+  for (var i = individuals.length; i < size; i++) {
+    individuals.push(new Individual(Math.floor(Math.random() * arenaDims[0]), Math.floor(Math.random() * arenaDims[1])))
+
+    var matches = individuals.filter(individual => (individual.x === individuals[i].x && individual.y === individuals[i].y)).length
+    while (matches > 1) {
+      individuals[i].x = Math.floor(Math.random() * arenaDims[0])
+      individuals[i].y = Math.floor(Math.random() * arenaDims[1])
+      matches = individuals.filter(individual => (individual.x === individuals[i].x && individual.y === individuals[i].y)).length
+    }
   }
   return individuals
 }
