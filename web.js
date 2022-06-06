@@ -5,8 +5,9 @@ const util = require('./util')
 
 require('dotenv').config();
 
-const port = process.env.PORT;
-const myUrl = process.env.MY_URL;
+const port = process.env.PORT | 8080;
+// TODO: use default value 'https://foo.com' for MY_URL
+const myUrl = process.env.MY_URL; 
 
 app.use(bodyParser.json());
 
@@ -19,7 +20,7 @@ app.post('/', function (req, res) {
   arenaDims = req.body.arena.dims;
   state = req.body.arena.state;
   numPlayers = Object.keys(state).length;
-  me = state[process.env.MY_URL];
+  me = state[myUrl]
   topPlayer = util.topPlayerState(state);
   closestPlayer = util.closestPlayerState(state, me, myUrl);
 
@@ -32,7 +33,12 @@ app.post('/', function (req, res) {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port, () => console.log(`Listening on port ${port}`))
+  if (myUrl){
+    console.log(`MY_URL is ${myUrl}`)
+    app.listen(port, () => console.log(`Listening on port ${port}`))
+  }else{
+    console.log("MY_URL needs to be set")
+  }
 }
 
 module.exports = app

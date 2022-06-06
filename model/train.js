@@ -22,10 +22,10 @@ class Train {
     for (var i = 0; i < 1; i++) {
       // TODO: 30 actions, then nextGen
       for (var a = 0; a < 1; a++) {
+        for (let index = 0; index < array.length; index++) {
+          array[index].score = Math.floor(Math.random() * 100)
+        }
         for (var index = 0; index < 1; index++) {
-          for (let index = 0; index < array.length; index++) {
-            array[index].score = Math.floor(Math.random() * 100)
-          }
           var me = array[index]
           var topPlayerScore = Math.max(...array.map(o => o.score))
           var topPlayer = array.find(o => o.score == topPlayerScore)
@@ -41,11 +41,26 @@ class Train {
               }
             }
           }
-          
-
-          console.log(`Me: \n ${me.name}, I am at ${me.x},${me.y}`)
-          console.log(`Top: \n ${topPlayer.name} has score ${topPlayer.score}`)
-          console.log(`Closest: \n ${closestPlayer.name} is at ${closestPlayer.x},${closestPlayer.y}`)
+					// TODO: map numeric value to *.wasHit and *.direction
+					input = [this.arenaDims[0], 
+									 this.arenaDims[1],
+									 array.length,
+									 me.x,
+									 me.y,
+									 me.score,
+									 me.direction,
+									 me.wasHit,
+									 topPlayer.x,
+									 topPlayer.y,
+									 topPlayer.score,
+									 topPlayer.direction,
+									 topPlayer.wasHit,
+									 closestPlayer.x,
+									 closestPlayer.y,
+									 closestPlayer.score,
+									 closestPlayer.direction,
+									 closestPlayer.wasHit
+									]
         }
       }
       // TODO: 300 actions, then nextGen
