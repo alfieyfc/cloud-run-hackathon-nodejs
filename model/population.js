@@ -33,6 +33,9 @@ class Population {
     while (nextGeneration.length < this.size) {
       nextGeneration.push(Individual.breed(selection(elites), Math.floor(Math.random() * this.arenaDims[0]), Math.floor(Math.random() * this.arenaDims[1])))
       var i = nextGeneration.length - 1;
+      if (Math.random() < 0.1) nextGeneration[i].dna.mutate()
+      // console.log(nextGeneration[i].score)
+
       var matches = nextGeneration.filter(individual => (individual.x === nextGeneration[i].x && individual.y === nextGeneration[i].y)).length
       while (matches > 1) {
         nextGeneration[i].x = Math.floor(Math.random() * this.arenaDims[0])
@@ -55,12 +58,17 @@ selection = (elites) => {
 
 pickOne = (list) => {
   var sum = 0
+  var base;
   for (let i = 0; i < list.length; i++) {
-    sum += list[i].score
+    if (list[i].score < 0) base = 1
+    else base = list[i].score * list[i].score + 1
+    sum += base
   }
 
   for (let i = 0; i < list.length; i++) {
-    list[i].prob = list[i].score / sum
+    if (list[i].score < 0) base = 1
+    else base = list[i].score * list[i].score + 1
+    list[i].prob = base / sum
   }
 
   var index = 0;
@@ -95,7 +103,7 @@ populate = (elites, size, arenaDims) => {
 }
 
 randomSize = () => {
-  return Math.floor(Math.random() * 30) + 10;
+  return Math.floor(Math.random() * 30) + 12;
 }
 
 module.exports = Population;

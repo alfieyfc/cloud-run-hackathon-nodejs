@@ -6,10 +6,10 @@ const dna = DNA.randomDNA()
 // console.log(dna)
 
 it(`wIL should have 18 * ${pHeight} random values`, () => {
-  expect(dna.wIL.length).toEqual(pHeight)
-  expect(dna.wIL[0].length).toEqual(18)
-  expect(dna.wLO.length).toEqual(4)
-  expect(dna.wLO[0].length).toEqual(pHeight)
+  expect(dna.wIL[0].length).toEqual(pHeight)
+  expect(dna.wIL.length).toEqual(18)
+  expect(dna.wLO[0].length).toEqual(4)
+  expect(dna.wLO.length).toEqual(pHeight)
 })
 
 it('mutate(0.1) should change wLO', () => {

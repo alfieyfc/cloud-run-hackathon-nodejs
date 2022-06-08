@@ -1,9 +1,9 @@
 require('dotenv').config();
 const pHeight = process.env.P_HEIGHT | 10;
-const wILWidth = 18;
-const wILHeight = pHeight;
-const wLOWidth = pHeight;
-const wLOHeight = 4;
+const wILHeight = 18;
+const wILWidth = pHeight;
+const wLOHeight = pHeight;
+const wLOWidth = 4;
 
 class DNA {
 
@@ -13,14 +13,14 @@ class DNA {
   }
 
   static randomDNA () {
-    var wIL = Array(wILHeight).fill(Array(wILWidth).fill(Math.random()));
-    var wLO = Array(wLOHeight).fill(Array(wLOWidth).fill(Math.random()));
+    var wIL = Array(wILHeight).fill(Array.from({ length: wILWidth }, () => Math.random()));
+    var wLO = Array(wLOHeight).fill(Array.from({ length: wLOWidth }, () => Math.random()));
     return new DNA(wIL, wLO);
   }
 
   static mix (dna_1, dna_2) {
-    var wIL = new Array(wILHeight).fill(Array(wILWidth).fill(Math.random()));
-    var wLO = new Array(wLOHeight).fill(Array(wLOWidth).fill(Math.random()));
+    var wIL = new Array(wILHeight).fill(Array(wILWidth).fill(0));
+    var wLO = new Array(wLOHeight).fill(Array(wLOWidth).fill(0));
     for (let i = 0; i < wILHeight; i++) {
       for (let j = 0; j < wILWidth; j++) {
         if (Math.random() >= 0.5) wIL[i][j] = dna_1.wIL[i][j]
@@ -52,11 +52,8 @@ class DNA {
 
 mutateSegment = (s) => {
   let e = Math.floor(Math.random() * s.length)
-  let c = s[e]
-  while (c == s[e]) {
-    c = Math.random()
-  }
-  s[e] = c
+  if (Math.random() >= 0.5) s[e] = s[e].map((v) => { return v * 1.1 })
+  else s[e] = s[e].map((v) => { return v * 0.9 })
 }
 
 module.exports = DNA;
