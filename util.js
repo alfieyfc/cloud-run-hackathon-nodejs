@@ -27,5 +27,16 @@ module.exports = {
   },
   numPlayers: (state) => {
     return Object.keys(state).length
+  },
+  pickOne: (probability_array) => {
+    var index = 0;
+    var r = Math.random()
+
+    while (r > 0) {
+      r = r - probability_array[index]
+      index++
+    }
+    index--
+    return probability_array[index]
   }
 }
