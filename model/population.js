@@ -103,7 +103,7 @@ populate = (elites, size, arenaDims) => {
 }
 
 randomSize = () => {
-  return Math.floor(Math.random() * 30) + 12;
+  return Math.floor(Math.random() * 30) + 16;
 }
 
 module.exports = Population;

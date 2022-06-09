@@ -1,5 +1,5 @@
 require('dotenv').config();
-const pHeight = process.env.P_HEIGHT | 10;
+const pHeight = process.env.P_HEIGHT || 10;
 const wILHeight = 18;
 const wILWidth = pHeight;
 const wLOHeight = pHeight;
@@ -13,27 +13,41 @@ class DNA {
   }
 
   static randomDNA () {
-    var wIL = Array(wILHeight).fill(Array.from({ length: wILWidth }, () => Math.random()));
-    var wLO = Array(wLOHeight).fill(Array.from({ length: wLOWidth }, () => Math.random()));
+    var wIL = Array.from({ length: wILHeight }, () => { return Array.from({ length: wILWidth }, () => { return Math.random() }) });
+    var wLO = Array.from({ length: wLOHeight }, () => { return Array.from({ length: wLOWidth }, () => { return Math.random() }) });
     return new DNA(wIL, wLO);
   }
 
   static mix (dna_1, dna_2) {
-    var wIL = new Array(wILHeight).fill(Array(wILWidth).fill(0));
-    var wLO = new Array(wLOHeight).fill(Array(wLOWidth).fill(0));
+    var wIL = Array.from({ length: wILHeight }, () => { return Array.from({ length: wILWidth }, () => { return 0 }) });
+    var wLO = Array.from({ length: wLOHeight }, () => { return Array.from({ length: wLOWidth }, () => { return 0 }) });
     for (let i = 0; i < wILHeight; i++) {
       for (let j = 0; j < wILWidth; j++) {
-        if (Math.random() >= 0.5) wIL[i][j] = dna_1.wIL[i][j]
-        else wIL[i][j] = dna_2.wIL[i][j]
+        if (Math.random() >= 0.5) {
+          // console.log(`wIL at (${i}, ${j}) from dna1 ${dna_1.wIL[i][j]}`)
+          wIL[i][j] = dna_1.wIL[i][j]
+        }
+        else {
+          // console.log(`wIL at (${i}, ${j}) from dna2 ${dna_2.wIL[i][j]}`)
+          wIL[i][j] = dna_2.wIL[i][j]
+        }
       }
     }
     for (let i = 0; i < wLOHeight; i++) {
       for (let j = 0; j < wLOWidth; j++) {
-        if (Math.random() >= 0.5) wLO[i][j] = dna_1.wLO[i][j]
-        else wLO[i][j] = dna_2.wLO[i][j]
+        if (Math.random() >= 0.5) {
+          // console.log(`wLO at (${i}, ${j}) from dna1 ${dna_1.wLO[i][j]}`)
+          wLO[i][j] = dna_1.wLO[i][j]
+        }
+        else {
+          // console.log(`wLO at (${i}, ${j}) from dna2 ${dna_2.wLO[i][j]}`)
+          wLO[i][j] = dna_2.wLO[i][j]
+        }
       }
     }
-    return new DNA(wIL, wLO)
+    var dna3 = new DNA(wIL, wLO)
+    // console.log(dna3)
+    return dna3
   }
 
   static clone (dna) {

@@ -37,12 +37,10 @@ it('mix() should make a living DNA', () => {
   expect(typeof DNA.mix(dna, second_dna)).toEqual(typeof dna)
 })
 
-it('mix() should make a living DNA', () => {
+it('mix() should not result same as parent', () => {
   second_dna = DNA.randomDNA()
   mixed_dna = DNA.mix(dna, second_dna)
-  expect(mixed_dna.wIL).not.toEqual(dna.wIL)
-  expect(mixed_dna.wIL).not.toEqual(second_dna.wIL)
-  expect(mixed_dna.wLO).not.toEqual(dna.wLO)
-  expect(mixed_dna.wLO).not.toEqual(second_dna.wLO)
+  expect(mixed_dna).not.toEqual(dna)
+  expect(mixed_dna).not.toEqual(second_dna)
 })
 

@@ -1,5 +1,5 @@
 const fs = require('fs');
-const stream = fs.createWriteStream('./model/failed_count.txt');
+const stream = fs.createWriteStream('./model/failed_count2.txt');
 
 const colors = require('colors');
 const math = require('mathjs');
@@ -36,16 +36,20 @@ class Train {
       for (var g = 0; g < 100; g++) {
         var previous_gen = this.population.individuals.slice()
         // Remove control and monkey
-        this.population.individuals.splice(-2)
+        this.population.individuals.splice(-6)
         // Next Generation
         this.population.reproduction();
 
         array = this.population.individuals
 
         // Always add a control
-        array[array.length - 1].name = "control"
+        array[array.length - 1].name = "control1"
+        array[array.length - 2].name = "control2"
+        array[array.length - 3].name = "control3"
+        array[array.length - 4].name = "control4"
+        array[array.length - 5].name = "control5"
         // Always add a monkey
-        array[array.length - 2].name = "monkey"
+        array[array.length - 6].name = "monkey"
 
         console.log(`\n--- Epoch ${epoch} Gen ${g} :Take 600 actions: | Population: ${this.population.size} --- (${epoch_total - epoch} epochs to go; ${epoch / epoch_total * 100}% completed)...`)
         for (var a = 0; a < 600; a++) {
@@ -62,7 +66,7 @@ class Train {
           var topPlayer = array.find(o => o.score == topPlayerScore)
 
           // Deside action for each player other than control and monkey
-          for (var index = 0; index < array.length - 2; index++) {
+          for (var index = 0; index < array.length - 6; index++) {
 
             var me = array[index]
 
@@ -103,14 +107,24 @@ class Train {
 
             var output = math.multiply(math.multiply(input, me.dna.wIL), me.dna.wLO)
 
+            var output_2 = output.map((e) => { return Math.pow(e, 2) })
+            // console.log(output_3)
+            var sum = output_2.reduce((a, b) => { return a + b })
+            // console.log(sum)
+            var prob = output_2.map((e) => { return e / sum })
+
             // Map max(output) to move[]
-            me.action = moves[output.indexOf(Math.max(...output))]
+            me.action = moves[prob.indexOf(util.pickOne(prob))]
           }
 
           // Deside action for control
-          array[array.length - 1].action = controlAction(array, this.arenaDims)
+          array[array.length - 1].action = controlAction("control1", array, this.arenaDims)
+          array[array.length - 2].action = controlAction("control2", array, this.arenaDims)
+          array[array.length - 3].action = controlAction("control3", array, this.arenaDims)
+          array[array.length - 4].action = controlAction("control4", array, this.arenaDims)
+          array[array.length - 5].action = controlAction("control5", array, this.arenaDims)
           // Deside action for monkey
-          array[array.length - 2].action = randomMove()
+          array[array.length - 6].action = randomMove()
 
           // Update x,y for each player that acted 'F'
           for (let index = 0; index < array.length; index++) {
@@ -227,15 +241,16 @@ class Train {
         // Find player with top score
         var sorted = array.slice().sort((a, b) => (a.score < b.score) ? 1 : -1)
         var lead = sorted[0]
-        while (lead.name == "control" || lead.name == "monkey") { lead = sorted[sorted.indexOf(lead) + 1] }
+        while (lead.name.indexOf("control") !== -1 || lead.name == "monkey") { lead = sorted[sorted.indexOf(lead) + 1] }
         var last = sorted[sorted.length - 1]
-        while (last.name == "control" || last.name == "monkey") { last = sorted[sorted.indexOf(last) - 1] }
-        var control = array.find(o => (o.name == "control"))
+        while (last.name.indexOf("control") !== -1 || last.name == "monkey") { last = sorted[sorted.indexOf(last) - 1] }
+        var controls = array.filter(o => (o.name.indexOf("control") !== -1))
+        controls.sort((a, b) => (a.score < b.score) ? 1 : -1)
         var monkey = array.find(o => (o.name == "monkey"))
-        var mon = [lead, last, control, monkey].sort((a, b) => (a.score < b.score) ? 1 : -1)
+        var mon = [lead, last, controls[0], monkey].sort((a, b) => (a.score < b.score) ? 1 : -1)
         mon.forEach((e) => {
           if (mon.indexOf(e) == 0) {
-            if (e.name == "control" || e.name == "monkey") {
+            if (e.name.indexOf("control") !== -1 || e.name == "monkey") {
               failed_count++;
               console.log(`${e.name} scored ${e.score}`.red)
               // Revert generation
@@ -243,7 +258,7 @@ class Train {
             }
             else console.log(`${e.name} scored ${e.score}`.green)
           } else if (mon.indexOf(e) == 3) {
-            if (e.name == "control" || e.name == "monkey") console.log(`${e.name} scored ${e.score}`.green)
+            if (e.name.indexOf("control") !== -1 || e.name == "monkey") console.log(`${e.name} scored ${e.score}`.green)
             else console.log(`${e.name} scored ${e.score}`.grey)
           } else {
             console.log(`${e.name} scored ${e.score}`)
@@ -262,7 +277,7 @@ class Train {
 
     console.log(`\nGeneration ${g - 1}: Top 10`)
     var finalElites = array.slice()
-    finalElites.splice(-2)
+    finalElites.splice(-6)
     finalElites = finalElites.sort((a, b) => (a.score < b.score) ? 1 : -1).slice(0, 10)
     for (let index = 0; index < finalElites.length; index++) {
       console.log(`${finalElites[index].name} scored ${finalElites[index].score}`)
@@ -275,7 +290,7 @@ class Train {
 
     const data = JSON.stringify(finalJson)
 
-    fs.writeFile('model/trained-elites.json', data, (err) => {
+    fs.writeFile('model/trained-elites2.json', data, (err) => {
       if (err) {
         throw err;
       }
@@ -300,10 +315,10 @@ randomMove = () => {
   return moves[Math.floor(Math.random() * moves.length)]
 }
 
-controlAction = (array, dims) => {
+controlAction = (name, array, dims) => {
   // control is always at [length-1]
   var action = randomMove()
-  var me = array[array.length - 1]
+  var me = array.find(o => o.name == name)
   if (me.wasHit) {
     action = 'F'
     switch (me.direction) {
