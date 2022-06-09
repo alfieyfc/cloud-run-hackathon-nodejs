@@ -1,5 +1,5 @@
 const fs = require('fs');
-const stream = fs.createWriteStream('./model/failed_count2.txt');
+const stream = fs.createWriteStream('./model/failed_count.txt');
 
 const colors = require('colors');
 const math = require('mathjs');
@@ -10,6 +10,7 @@ require('dotenv').config();
 const epoch_total = process.env.TRAINING_EPOCH || 20;
 const directions = ['N', 'E', 'S', 'W'];
 const moves = ['T', 'F', 'R', 'L'];
+const cellsLength = 140;
 var previous_failed_count = 0;
 
 class Train {
@@ -54,56 +55,28 @@ class Train {
         console.log(`\n--- Epoch ${epoch} Gen ${g} :Take 600 actions: | Population: ${this.population.size} --- (${epoch_total - epoch} epochs to go; ${epoch / epoch_total * 100}% completed)...`)
         for (var a = 0; a < 600; a++) {
 
-          // Update score for players that were hit (-1)
-          for (let index = 0; index < array.length; index++) {
-            if (array[index].wasHit)
-              array[index].score--
+          // Get players score in each cell
+          var cells = Array(cellsLength).fill(0)
+          for (var o = 0; o < array.length; o++) {
+            var i = array[o].x + array[o].y * this.arenaDims[0]
+            cells[i] = array[o].score
+            if (cells[i] == 0) cells[i]++
           }
-
-          // Find player with top score
-          var topPlayerScore = Math.max(...array.map(o => o.score))
-          // console.log(topPlayerScore)
-          var topPlayer = array.find(o => o.score == topPlayerScore)
-
-          // Deside action for each player other than control and monkey
+          // Decide action for each player other than control and monkey
           for (var index = 0; index < array.length - 6; index++) {
 
             var me = array[index]
 
-            // Find player closest to current player (me)
-            var closestPlayer
-            var closestPlayerDist
-            for (var j = 0; j < array.length; j++) {
-              if (!closestPlayer || array[j].name != me.name) {
-                let player = array[j]
-                let dist = Math.sqrt(Math.pow(player.x - me.x, 2) + Math.pow(player.y - me.y, 2))
-                if (!closestPlayerDist || closestPlayerDist > dist) {
-                  closestPlayer = player
-                  closestPlayerDist = dist
-                }
-              }
+            var input = Array(cellsLength + 6)
+            input[0] = this.arenaDims[0]
+            input[1] = this.arenaDims[1]
+            input[2] = me.x
+            input[3] = me.y
+            input[4] = directions.indexOf(me.direction)
+            input[5] = Number(me.wasHit)
+            for (var i = 6; i < input.length; i++) {
+              input[i] = cells[i - 6]
             }
-
-            var input = [
-              this.arenaDims[0],
-              this.arenaDims[1],
-              array.length,
-              me.x,
-              me.y,
-              me.score,
-              directions.indexOf(me.direction),
-              Number(me.wasHit),
-              topPlayer.x,
-              topPlayer.y,
-              topPlayer.score,
-              directions.indexOf(topPlayer.direction),
-              Number(topPlayer.wasHit),
-              closestPlayer.x,
-              closestPlayer.y,
-              closestPlayer.score,
-              directions.indexOf(closestPlayer.direction),
-              Number(closestPlayer.wasHit)
-            ]
 
             var output = math.multiply(math.multiply(input, me.dna.wIL), me.dna.wLO)
 
@@ -114,7 +87,7 @@ class Train {
             var prob = output_2.map((e) => { return e / sum })
 
             // Map max(output) to move[]
-            me.action = moves[prob.indexOf(util.pickOne(prob))]
+            me.action = moves[prob.indexOf(Math.max(...prob))]
           }
 
           // Deside action for control
@@ -126,119 +99,125 @@ class Train {
           // Deside action for monkey
           array[array.length - 6].action = randomMove()
 
-          // Update x,y for each player that acted 'F'
+          // Results of all decisions made
           for (let index = 0; index < array.length; index++) {
-            if (array[index].action === 'F')
-              switch (array[index].direction) {
-                case 'N':
-                  if (array[index].y > 0) array[index].y--;
-                  break;
-                case 'E':
-                  if (array[index].x < this.arenaDims[0] - 1) array[index].x++;
-                  break;
-                case 'S':
-                  if (array[index].y < this.arenaDims[1] - 1) array[index].y++;
-                  break;
-                case 'W':
-                  if (array[index].x > 0) array[index].x--;
-                  break;
-              }
-          }
-
-          // Update direction for each player that acted 'R' or 'L'
-          for (let index = 0; index < array.length; index++) {
-            if (array[index].action === 'R') {
-              switch (array[index].direction) {
-                case 'N':
-                  array[index].direction = 'E';
-                  break;
-                case 'E':
-                  array[index].direction = 'S';
-                  break;
-                case 'S':
-                  array[index].direction = 'W';
-                  break;
-                case 'W':
-                  array[index].direction = 'N';
-                  break;
-                default:
-                  break;
-              }
-            } else if (array[index].action === 'L') {
-              switch (array[index].direction) {
-                case 'N':
-                  array[index].direction = 'W';
-                  break;
-                case 'E':
-                  array[index].direction = 'N';
-                  break;
-                case 'S':
-                  array[index].direction = 'E';
-                  break;
-                case 'W':
-                  array[index].direction = 'S';
-                  break;
-                default:
-                  break;
-              }
-            }
-          }
-
-          // Update score and wasHit for each player
-          for (let index = 0; index < array.length; index++) {
-            var victim;
-            if (array[index].action === 'T') {
-              switch (array[index].direction) {
-                case 'N':
-                  for (var d = 1; d <= 3; d++) {
-                    victim = array.find(o => (o.y == array[index].y - d))
-                    if (victim) {
-                      // console.log(`${array[index].name} hits ${victim.name}`)
-                      victim.wasHit = true;
-                      array[index].score++;
-                      break;
+            switch (array[index].action) {
+              case 'F':
+                // Update x,y for each player that acted 'F'
+                switch (array[index].direction) {
+                  case 'N':
+                    if (array[index].y > 0) array[index].y--;
+                    break;
+                  case 'E':
+                    if (array[index].x < this.arenaDims[0] - 1) array[index].x++;
+                    break;
+                  case 'S':
+                    if (array[index].y < this.arenaDims[1] - 1) array[index].y++;
+                    break;
+                  case 'W':
+                    if (array[index].x > 0) array[index].x--;
+                    break;
+                }
+                break;
+              case 'R':
+                // Update direction for each player that acted 'R'
+                switch (array[index].direction) {
+                  case 'N':
+                    array[index].direction = 'E';
+                    break;
+                  case 'E':
+                    array[index].direction = 'S';
+                    break;
+                  case 'S':
+                    array[index].direction = 'W';
+                    break;
+                  case 'W':
+                    array[index].direction = 'N';
+                    break;
+                  default:
+                    break;
+                }
+                break;
+              case 'L':
+                // Update direction for each player that acted 'L'
+                switch (array[index].direction) {
+                  case 'N':
+                    array[index].direction = 'W';
+                    break;
+                  case 'E':
+                    array[index].direction = 'N';
+                    break;
+                  case 'S':
+                    array[index].direction = 'E';
+                    break;
+                  case 'W':
+                    array[index].direction = 'S';
+                    break;
+                  default:
+                    break;
+                }
+                break;
+              case 'T':
+                var victim;
+                // Update score and wasHit for each player
+                switch (array[index].direction) {
+                  case 'N':
+                    for (var d = 1; d <= 3; d++) {
+                      victim = array.find(o => (o.y == array[index].y - d))
+                      if (victim) {
+                        // console.log(`${array[index].name} hits ${victim.name}`)
+                        victim.wasHit = true;
+                        array[index].score++;
+                        victim.score--;
+                        break;
+                      }
                     }
-                  }
-                  break;
-                case 'E':
-                  for (var d = 1; d <= 3; d++) {
-                    victim = array.find(o => (o.x == array[index].x + d))
-                    if (victim) {
-                      // console.log(`${array[index].name} hits ${victim.name}`)
-                      victim.wasHit = true;
-                      array[index].score++;
-                      break;
+                    break;
+                  case 'E':
+                    for (var d = 1; d <= 3; d++) {
+                      victim = array.find(o => (o.x == array[index].x + d))
+                      if (victim) {
+                        // console.log(`${array[index].name} hits ${victim.name}`)
+                        victim.wasHit = true;
+                        array[index].score++;
+                        victim.score--;
+                        break;
+                      }
                     }
-                  }
-                  break;
-                case 'S':
-                  for (var d = 1; d <= 3; d++) {
-                    victim = array.find(o => (o.y == array[index].y + d))
-                    if (victim) {
-                      // console.log(`${array[index].name} hits ${victim.name}`)
-                      victim.wasHit = true;
-                      array[index].score++;
-                      break;
+                    break;
+                  case 'S':
+                    for (var d = 1; d <= 3; d++) {
+                      victim = array.find(o => (o.y == array[index].y + d))
+                      if (victim) {
+                        // console.log(`${array[index].name} hits ${victim.name}`)
+                        victim.wasHit = true;
+                        array[index].score++;
+                        victim.score--;
+                        break;
+                      }
                     }
-                  }
-                  break;
-                case 'W':
-                  for (var d = 1; d <= 3; d++) {
-                    victim = array.find(o => (o.y == array[index].x - d))
-                    if (victim) {
-                      // console.log(`${array[index].name} hits ${victim.name}`)
-                      victim.wasHit = true;
-                      array[index].score++;
-                      break;
+                    break;
+                  case 'W':
+                    for (var d = 1; d <= 3; d++) {
+                      victim = array.find(o => (o.y == array[index].x - d))
+                      if (victim) {
+                        // console.log(`${array[index].name} hits ${victim.name}`)
+                        victim.wasHit = true;
+                        array[index].score++;
+                        victim.score--;
+                        break;
+                      }
                     }
-                  }
-                  break;
-              }
+                    break;
+                }
+                break;
+              default:
+                break;
             }
           }
         }
 
-        // Find player with top score
+        // Monitoring the training progress
         var sorted = array.slice().sort((a, b) => (a.score < b.score) ? 1 : -1)
         var lead = sorted[0]
         while (lead.name.indexOf("control") !== -1 || lead.name == "monkey") { lead = sorted[sorted.indexOf(lead) + 1] }
@@ -247,6 +226,8 @@ class Train {
         var controls = array.filter(o => (o.name.indexOf("control") !== -1))
         controls.sort((a, b) => (a.score < b.score) ? 1 : -1)
         var monkey = array.find(o => (o.name == "monkey"))
+
+        // Sort the monitored players (lead, last, top control, monkey)
         var mon = [lead, last, controls[0], monkey].sort((a, b) => (a.score < b.score) ? 1 : -1)
         mon.forEach((e) => {
           if (mon.indexOf(e) == 0) {
@@ -269,13 +250,14 @@ class Train {
           console.log("Failed to win the game " + `${failed_count}`.red + ` times during this epoch... Previously ${previous_failed_count}`)
         else
           console.log("Failed to win the game " + `${failed_count}`.grey + ` times during this epoch... Previously ${previous_failed_count}`)
+
       }
-      stream.write(`${failed_count}\n`)
       previous_failed_count = failed_count
     }
+    stream.write(`${failed_count}\n`)
     stream.end();
 
-    console.log(`\nGeneration ${g - 1}: Top 10`)
+    console.log(`\nEpochs: ${epoch}, Generations ${g * epoch} --- Top 10 in Final Generation ---`)
     var finalElites = array.slice()
     finalElites.splice(-6)
     finalElites = finalElites.sort((a, b) => (a.score < b.score) ? 1 : -1).slice(0, 10)
@@ -296,17 +278,10 @@ class Train {
       }
       console.log("JSON data is saved.")
     })
-
-
-    // console.log(`\nGeneration ${g - 1}:`)
-    // var finalPopulation = this.population.individuals.sort((a, b) => (a.score < b.score) ? 1 : -1).slice(0, -3)
-    // for (let index = 0; index < finalPopulation.length; index++) {
-    //   console.log(`${finalPopulation[index].name} scored ${finalPopulation[index].score}`)
-    // }
-    // console.log(finalPopulation[0].dna)
   }
 
 }
+
 
 
 module.exports = Train;
@@ -372,7 +347,7 @@ controlAction = (name, array, dims) => {
         break;
     }
   } else {
-    for (var i = 0; i < array.length - 1; i++) {
+    for (var i = 0; i < array.length; i++) {
       current_player = array[i]
       if (current_player.name != me.name) {
         // if in the same col and within 3 tiles
@@ -387,7 +362,7 @@ controlAction = (name, array, dims) => {
             } else {
               action = 'L'
             }
-          } else {                           // target is on North side
+          } else {                          // target is on North side
             if (me.direction == 'N') {
               action = 'T'
               break;
@@ -423,7 +398,6 @@ controlAction = (name, array, dims) => {
         }
       }
     }
-
   }
 
   return action

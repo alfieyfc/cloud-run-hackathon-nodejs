@@ -9,18 +9,14 @@ class Population {
 
   static random = () => {
     var size = randomSize()
-    var x = Math.floor(Math.random() * 50) + 14
-    var y = Math.floor(Math.random() * 50) + 10
-    var arenaDims = [x, y]
+    var arenaDims = [14, 10]
     return new Population(size, arenaDims, populate(null, size, arenaDims))
   }
 
   static preset = (arenaDims, elites) => {
     var size = randomSize()
     if (!arenaDims) {
-      var x = Math.floor(Math.random() * 50) + 14
-      var y = Math.floor(Math.random() * 50) + 10
-      arenaDims = [x, y]
+      arenaDims = [14, 10]
     }
     return new Population(size, arenaDims, populate(elites, size, arenaDims))
   }

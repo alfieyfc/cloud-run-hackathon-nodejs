@@ -1,6 +1,6 @@
 require('dotenv').config();
 const pHeight = process.env.P_HEIGHT || 10;
-const wILHeight = 18;
+const inputLength = 146;
 const wILWidth = pHeight;
 const wLOHeight = pHeight;
 const wLOWidth = 4;
@@ -13,15 +13,15 @@ class DNA {
   }
 
   static randomDNA () {
-    var wIL = Array.from({ length: wILHeight }, () => { return Array.from({ length: wILWidth }, () => { return Math.random() }) });
+    var wIL = Array.from({ length: inputLength }, () => { return Array.from({ length: wILWidth }, () => { return Math.random() }) });
     var wLO = Array.from({ length: wLOHeight }, () => { return Array.from({ length: wLOWidth }, () => { return Math.random() }) });
     return new DNA(wIL, wLO);
   }
 
   static mix (dna_1, dna_2) {
-    var wIL = Array.from({ length: wILHeight }, () => { return Array.from({ length: wILWidth }, () => { return 0 }) });
+    var wIL = Array.from({ length: inputLength }, () => { return Array.from({ length: wILWidth }, () => { return 0 }) });
     var wLO = Array.from({ length: wLOHeight }, () => { return Array.from({ length: wLOWidth }, () => { return 0 }) });
-    for (let i = 0; i < wILHeight; i++) {
+    for (let i = 0; i < inputLength; i++) {
       for (let j = 0; j < wILWidth; j++) {
         if (Math.random() >= 0.5) {
           // console.log(`wIL at (${i}, ${j}) from dna1 ${dna_1.wIL[i][j]}`)
