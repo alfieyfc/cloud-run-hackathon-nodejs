@@ -17,7 +17,6 @@ const wLOWidth = 4;
 require('dotenv').config();
 
 const port = process.env.PORT || 8080;
-const myUrl = process.env.MY_URL || "https://foo.com";
 
 app.use(bodyParser.json());
 
@@ -26,7 +25,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-
+  myUrl = req.body._links.self.href
   arenaDims = req.body.arena.dims;
   state = req.body.arena.state;
   var state_arr = []
@@ -42,17 +41,11 @@ app.post('/', function (req, res) {
     state_arr.push(object)
   }
 
-  // numPlayers = Object.keys(state).length;
-  // me = state[myUrl]
-  // topPlayer = util.topPlayerState(state);
-  // closestPlayer = util.closestPlayerState(state, me, myUrl);
-
   action = util.controlAction(myUrl, state_arr, arenaDims)
   res.send(action);
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  console.log(`MY_URL is ${myUrl}`)
   app.listen(port, () => console.log(`Listening on port ${port}`))
 }
 
