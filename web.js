@@ -37,7 +37,7 @@ app.post('/', function (req, res) {
       x: state[key].x,
       y: state[key].y,
       direction: state[key].direction,
-      wasHit: state[key].false
+      wasHit: state[key].wasHit
     }
     state_arr.push(object)
   }
