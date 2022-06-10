@@ -29,12 +29,25 @@ app.post('/', function (req, res) {
 
   arenaDims = req.body.arena.dims;
   state = req.body.arena.state;
-  numPlayers = Object.keys(state).length;
-  me = state[myUrl]
-  topPlayer = util.topPlayerState(state);
-  closestPlayer = util.closestPlayerState(state, me, myUrl);
+  var state_arr = []
+  for (key in state) {
+    var object = {
+      name: key,
+      score: state[key].score,
+      x: state[key].x,
+      y: state[key].y,
+      direction: state[key].direction,
+      wasHit: state[key].false
+    }
+    state_arr.push(object)
+  }
 
-  action = util.controlAction(myUrl, state, arenaDims)
+  // numPlayers = Object.keys(state).length;
+  // me = state[myUrl]
+  // topPlayer = util.topPlayerState(state);
+  // closestPlayer = util.closestPlayerState(state, me, myUrl);
+
+  action = util.controlAction(myUrl, state_arr, arenaDims)
   res.send(action);
 });
 
